@@ -33,15 +33,19 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <!-- get project title  -->
 <!-- own website starts here, the following may be changed as you like -->
 
-<?php if ($handle=fopen('http://'.$domain.'/export/projtitl.php?group_name='.$group_name,'r')){
-$contents = '';
-while (!feof($handle)) {
-	$contents .= fread($handle, 8192);
-}
-fclose($handle);
-echo $contents; } ?>
+<?php
+#	if ($handle=fopen('http://'.$domain.'/export/projtitl.php?group_name='.$group_name,'r')){
+#		$contents = '';
+#		while (!feof($handle)) {
+#			$contents .= fread($handle, 8192);
+#		}
+#		fclose($handle);
+#		echo $contents; 
+#	}
+?>
 
 <!-- end of project description -->
+<h1>Welcome to refnet - Bibliometric Tools for R project!</h1>
 
 <p>This is the <a href="http://<?php echo $domain; ?>/projects/<?php echo $group_name; ?>/">refnet</a> package for the <a href="http://www.r-project.org/">R statistical computing environment</a>. Our goal is to provide a package of tools for bibliometric analyses. This package and its tools are currently designed to read, analyze and visualize <a href="http://apps.webofknowledge.com/">Thomson-Reuters Web of Knowledge/Science, ISI</a> and <a href="http://www.scopus.com/home.url">SCOPUS</a> format reference data files. Social network analyses, geocoding of addresses and spatial visualization are supported.</p>
 
