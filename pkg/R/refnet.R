@@ -1280,12 +1280,14 @@ net_plot_coauthor_country <- function(addresses, authors__references) {
 	zp1 <- zp1 + geom_point(
 		data = data.frame(layoutCoordinates),  # Add nodes
 		aes(x = LON, y = LAT), size = 5+100*degree(linkages_countries_net, cmode="outdegree", rescale=TRUE), pch = 21,
-		colour = gray(4/10), fill = gray(6/10)
+		#colour = gray(4/10), fill = gray(6/10)
+		colour = rgb(8/10, 2/10, 2/10, alpha=5/10), fill = rgb(9/10, 6/10, 6/10, alpha=5/10)
 	)  # Customize gradient v
 
 	#zp1 <- zp1 + scale_colour_gradient(low = gray(0), high = gray(9/10), guide = "none")
 	#zp1 <- zp1 + scale_colour_gradient(low = gray(8/10), high = gray(8/10), guide = "none")
-	zp1 <- zp1 + scale_colour_gradient(low = gray(4/10), high = gray(4/10), guide = "none")
+	#zp1 <- zp1 + scale_colour_gradient(low = gray(4/10), high = gray(4/10), guide = "none")
+	zp1 <- zp1 + scale_colour_gradient(low = rgb(8/10, 2/10, 2/10, alpha=5/10), high = rgb(8/10, 2/10, 2/10, alpha=5/10), guide = "none")
 	#zp1 <- zp1 + scale_size(range = c(1/10, 1), guide = "none")  # Customize taper
 	zp1 <- zp1 + scale_size(range = c(1, 1), guide = "none")  # Customize taper
 
@@ -1470,7 +1472,8 @@ net_plot_coauthor_address <- function(addresses, authors__references) {
 	zp1 <- zp1 + geom_point(
 		data = data.frame(layoutCoordinates),  # Add nodes
 		aes(x = LON, y = LAT), size = 3+100*degree(linkages_points_net, cmode="outdegree", rescale=TRUE), pch = 21,
-		colour = gray(4/10), fill = gray(6/10)
+		#colour = gray(4/10, alpha=5/10), fill = gray(6/10, alpha=5/10)
+		colour = rgb(8/10, 2/10, 2/10, alpha=5/10), fill = rgb(9/10, 6/10, 6/10, alpha=5/10)
 	)  # Customize gradient v
 	
 	#zp1 <- zp1 + scale_shape_discrete(name  ="Prop. Centrality", breaks=c(3+100*0, 3+100*0.05, 3+100*0.1, 3+100*0.2), labels=c("0%", "5%", "10%", "20%"))
@@ -1479,7 +1482,8 @@ net_plot_coauthor_address <- function(addresses, authors__references) {
 
 	#zp1 <- zp1 + scale_colour_gradient(low = gray(0), high = gray(9/10), guide = "none")
 	#zp1 <- zp1 + scale_colour_gradient(low = gray(8/10), high = gray(8/10), guide = "none")
-	zp1 <- zp1 + scale_colour_gradient(low = gray(4/10), high = gray(4/10), guide = "none")
+	#zp1 <- zp1 + scale_colour_gradient(low = gray(4/10), high = gray(4/10), guide = "none")
+	zp1 <- zp1 + scale_colour_gradient(low = rgb(8/10, 2/10, 2/10, alpha=5/10), high = rgb(8/10, 2/10, 2/10, alpha=5/10), guide = "none")
 	#zp1 <- zp1 + scale_size(range = c(1/10, 1), guide = "none")  # Customize taper
 	zp1 <- zp1 + scale_size(range = c(5/10, 5/10), guide = "none")  # Customize taper
 
