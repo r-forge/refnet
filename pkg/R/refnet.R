@@ -776,7 +776,7 @@ merge_records <- function(references, authors, authors__references, addresses=""
 #' @param x references data.frame that should contain three columns, the first of which is assumed to be the AU_ID, the second of which can be a code or description of the type of addresses being processed (e.g. "C1") and the third being the address itself, stripped to something Google Maps can accurately locate.
 #' @param verbose=FALSE argument that when set to TRUE will output search strings and output from the Google Maps API call as it proceeds, useful for troubleshooting long-running calls to the function
 
-refnet_geocode <- function (x, verbose=FALSE) {
+refnet_geocode <- function (x, key="", verbose=FALSE) {
 	##	x in this case is assumed to be a data.frame object with two 
 	##		columns, the first being the ID to tag the record with, the second
 	##		being a descriptive code (e.g. C1, RP, etc.) and the third being the
@@ -788,14 +788,20 @@ refnet_geocode <- function (x, verbose=FALSE) {
 	y <- y[-1, ]
 	colnames(y) <- columns
 
-	##	Pull key info from the x data.frame argument:
+	##	Pull address info from the x data.frame argument:
 	y[1, "AU_ID"] <- x[1]
 	y[1, "type"] <- x[2]
 	temp00 <- data.frame(lapply(x[3], as.character), stringsAsFactors = FALSE)
-	
-	temp01 <- paste("http://maps.google.com/maps/geo?q=", gsub(" ", 
-	"+", temp00), "&output=xml&key=$key", 
-	sep = "", collapse = NULL)
+
+	##	This is the old Google Geocoding API format:
+	#temp01 <- paste("http://maps.google.com/maps/geo?q=", gsub(" ", "+", temp00), "&output=xml&key=", key, sep = "", collapse = NULL)
+
+	##	We're replacing it with the new Geocoding API format:
+	if (key == "") {
+		temp01 <- paste("https://maps.googleapis.com/maps/api/geocode/xml?address=", gsub(" ", "+", temp00), "&sensor=false", sep = "", collapse = NULL)
+	} else {
+		temp01 <- paste("https://maps.googleapis.com/maps/api/geocode/xml?address=", gsub(" ", "+", temp00), "&sensor=false&key=", key, sep = "", collapse = NULL)
+	}
 
 	if (verbose) {
 		print(temp01)
@@ -809,84 +815,50 @@ refnet_geocode <- function (x, verbose=FALSE) {
 	if (length(grep("^[ \\n]*$", y[1, "search_string"])) == 0) {
 		temp02 <- readLines(temp01)
 	
-		temp03 <- grep("coordinates", temp02)[1]
-		temp04 <- substr(temp02[temp03], 25, 47)
+		temp03 <- grep("<location>", temp02)[1]
+		temp04 <- gsub("^.*<lat>(.*)</lat>.*$", "\\1", temp02[temp03+1])
 		
 		if (!is.na(temp04[1])) {
-			temp05 <- temp04[1]
+			temp05 <- gsub("^.*<lng>(.*)</lng>.*$", "\\1", temp02[temp03+2])
 		}	else {
-			temp05 <- ","
+			temp05 <- temp04
 		}
-		temp06 <- strsplit(temp05, ",")
-		temp07 <- grep("LatLonBox", temp02)[1]
-		temp08 <- gsub("\"", "", as.character(temp02[temp07]))
-		temp09 <- unlist(strsplit(as.character(temp08), " "))
 		
-		if (!is.na(as.double(unlist(strsplit(as.character(temp06), "\""))[4]))) {
-			lat <- as.double(unlist(strsplit(as.character(temp06), "\""))[4])
-		} else {
-			lat <- NA
-		}
-		y[1, "latitude"] <- lat
+		y[1, "latitude"] <- temp04
+		y[1, "longitude"] <- temp05
 		
-		if (!is.na(as.double(unlist(strsplit(as.character(temp06), "\""))[2]))) {
-			long <- as.double(unlist(strsplit(as.character(temp06), "\""))[2])
-		} else {
-			long <- NA
-		}
-		y[1, "longitude"] <- long
-		
-		if (!is.na(as.double(unlist(strsplit(as.character(temp09[8]), "="))[2]))) {
-			box_north <- as.double(unlist(strsplit(as.character(temp09[8]), "="))[2])
-		} else {
-			box_north <- NA
-		}
-		y[1, "box_north"] <- box_north
-		
-		if (!is.na(as.double(unlist(strsplit(as.character(temp09[9]), "="))[2]))) {
-			box_south <- as.double(unlist(strsplit(as.character(temp09[9]), "="))[2])
-		} else {
-			box_south = NA
-		}
-		y[1, "box_south"] <- box_south
-		
-		if (!is.na(as.double(unlist(strsplit(as.character(temp09[10]), "="))[2]))) {
-			box_east <- as.double(unlist(strsplit(as.character(temp09[10]), "="))[2])
-		} else {
-			box_east <- NA
-		}
-		y[1, "box_east"] <- box_east
-		
-		if (!is.na(as.double(unlist(strsplit(as.character(temp09[11]), "="))[2]))) {
-			box_west <- as.double(unlist(strsplit(as.character(temp09[11]), "="))[2])
-		} else {
-			box_west <- NA
-		}
-		y[1, "box_west"] <- box_west
 
-		search_string <- grep("<code>.*</code>", temp02)[1]
-		y[1, "status_code"] <- gsub("^.*<code>(.*)</code>.*$", "\\1", temp02[search_string])
-		
-		search_string <- grep("Accuracy=", temp02)[1]
-		y[1, "accuracy"] <- gsub("^.*Accuracy=\"([^\"]+)\".*$", "\\1", temp02[search_string])
+		search_string <- grep("<status>.*</status>", temp02)
+		if (length(search_string) > 1) search_string <- min(search_string)
+		if (length(search_string) == 1) y[1, "status_code"] <- gsub("^.*<status>(.*)</status>.*$", "\\1", temp02[search_string])
 
-		search_string <- grep("<address>.*</address>", temp02)[1]
-		y[1, "address"] <- gsub("^.*<address>(.*)</address>.*$", "\\1", temp02[search_string])
+		search_string <- grep("<partial_match>.*</partial_match>", temp02)
+		if (length(search_string) > 1) search_string <- max(search_string)
+		if (length(search_string) == 1) y[1, "accuracy"] <- gsub("^.*<partial_match>(.*)</partial_match>.*$", "\\1", temp02[search_string])
+		
+		search_string <- grep("<formatted_address>.*</formatted_address>", temp02)
+		if (length(search_string) > 1) search_string <- max(search_string)
+		if (length(search_string) == 1) y[1, "address"] <- gsub("^.*<formatted_address>(.*)</formatted_address>.*$", "\\1", temp02[search_string])
 
-		search_string <- grep("<CountryNameCode>.*</CountryNameCode>", temp02)[1]
-		y[1, "country_name_code"] <- gsub("^.*<CountryNameCode>(.*)</CountryNameCode>.*$", "\\1", temp02[search_string])
+		search_string <- grep("<type>country</type>", temp02)
+		if (length(search_string) > 1) search_string <- max(search_string)
+		if (length(search_string) == 1) y[1, "country_name_code"] <- gsub("^.*<short_name>(.*)</short_name>.*$", "\\1", temp02[search_string-1])
+		if (length(search_string) == 1) y[1, "country_name"] <- gsub("^.*<long_name>(.*)</long_name>.*$", "\\1", temp02[search_string-2])
 		
-		search_string <- grep("<CountryName>.*</CountryName>", temp02)[1]
-		y[1, "country_name"] <- gsub("^.*<CountryName>(.*)</CountryName>.*$", "\\1", temp02[search_string])
+		search_string <- grep("<type>administrative_area_level_1</type>", temp02)
+		if (length(search_string) > 1) search_string <- max(search_string)
+		if (length(search_string) == 1) y[1, "administrative_area"] <- gsub("^.*<long_name>(.*)</long_name>.*$", "\\1", temp02[search_string-2])
+
+		search_string <- grep("<type>locality</type>", temp02)
+		if (length(search_string) > 1) search_string <- max(search_string)
+		if (length(search_string) == 1) y[1, "locality"] <- gsub("^.*<long_name>(.*)</long_name>.*$", "\\1", temp02[search_string-2])
 		
-		search_string <- grep("<AdministrativeAreaName>.*</AdministrativeAreaName>", temp02)[1]
-		y[1, "administrative_area"] <- gsub("^.*<AdministrativeAreaName>(.*)</AdministrativeAreaName>.*$", "\\1", temp02[search_string])
-		
-		search_string <- grep("<LocalityName>.*</LocalityName>", temp02)[1]
-		y[1, "locality"] <- gsub("^.*<LocalityName>(.*)</LocalityName>.*$", "\\1", temp02[search_string])
-		
-		search_string <- grep("<PostalCodeNumber>.*</PostalCodeNumber>", temp02)[1]
-		y[1, "postal_code"] <- gsub("^.*<PostalCodeNumber>(.*)</PostalCodeNumber>.*$", "\\1", temp02[search_string])
+		search_string <- grep("<type>postal_code</type>", temp02)
+		if (length(search_string) > 1) search_string <- max(search_string)
+		if (length(search_string) == 1) y[1, "postal_code"] <- gsub("^.*<long_name>(.*)</long_name>.*$", "\\1", temp02[search_string-2])
+
+		##	NOTE: I stripped out the code that saves off the viewport and/or 
+		##		bounding box for approximate matches...
 	}
 
 	return(y)
@@ -909,7 +881,7 @@ refnet_geocode <- function (x, verbose=FALSE) {
 #'   function will be saved
 #' @param verbose=FALSE argument that when set to TRUE will output search strings and output from the Google Maps API call as it proceeds, useful for troubleshooting long-running calls to the function
 
-read_addresses <- function(x, filename_root="", verbose=FALSE) {
+read_addresses <- function(x, filename_root="", key="", verbose=FALSE) {
 	columns <- c("AU_ID", "type", "search_string", "status_code", "accuracy", "address", "country_name_code", "country_name", "administrative_area", "locality", "postal_code", "latitude", "longitude", "box_north", "box_south", "box_east", "box_west")
 
 	y <- data.frame(t(rep("", length(columns))), stringsAsFactors=FALSE)
@@ -918,7 +890,7 @@ read_addresses <- function(x, filename_root="", verbose=FALSE) {
 
 	for (i in 1:nrow(x)) {
 		input <- x[i, ]
-		output <- refnet_geocode(input)
+		output <- refnet_geocode(input, key=key, verbose=verbose)
 
 		counter <- 0
 		
@@ -931,7 +903,7 @@ read_addresses <- function(x, filename_root="", verbose=FALSE) {
 			}
 			Sys.sleep(0.5)
 			counter <- counter + 1
-			output <- refnet_geocode(input)
+			output <- refnet_geocode(input, key=key, verbose=verbose)
 		}
 
 		##	If it's still a fail, let's try stripping the city, or the first
@@ -949,7 +921,7 @@ read_addresses <- function(x, filename_root="", verbose=FALSE) {
 			}
 
 			counter <- counter - 1
-			output <- refnet_geocode(input)
+			output <- refnet_geocode(input, key=key, verbose=verbose)
 		}
 
 		y <- rbind(y, output)
