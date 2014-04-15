@@ -316,7 +316,11 @@ read_authors <- function(references, filename_root="") {
 		##	The new CIW format does not actually fill the AF field, instead
 		##		using the AU field for the full name.  Therefore we'll check it
 		##		and fill AF from AU if it's all NA:
-		if (is.na(authors_AF)) authors_AF <- authors_AU
+		if (length(authors_AF)==1) {
+			if (is.na(authors_AF)) {
+				authors_AF <- authors_AU
+			}
+		}
 
 		##	The email list is interesting because it seems it has line
 		##		breaks and is "; " delimited.  So we have to clean the line
