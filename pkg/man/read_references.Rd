@@ -2,8 +2,7 @@
 \alias{read_references}
 \title{Reads Thomson Reuters Web of Knowledge/Science and ISI reference export files}
 \usage{
-  read_references(data = ".", dir = TRUE,
-    filename_root = "")
+read_references(data = ".", dir = TRUE, filename_root = "")
 }
 \arguments{
   \item{data}{either a directory, used in conjuction with
@@ -19,9 +18,9 @@
   saved}
 }
 \description{
-  \code{read_references} This function reads Thomson
-  Reuters Web of Knowledge and ISI format reference data
-  files into an R friendly data format and can optionally
-  write the converted data to a friendly CSV format.
+\code{read_references} This function reads Thomson Reuters
+Web of Knowledge and ISI format reference data files into
+an R friendly data format and can optionally write the
+converted data to a friendly CSV format.
 }
 

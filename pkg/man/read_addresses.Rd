@@ -2,7 +2,7 @@
 \alias{read_addresses}
 \title{Processes multiple records of a data.frame of addresses and attempts to geocode them using refnet_geocode()}
 \usage{
-  read_addresses(x, filename_root = "", verbose = FALSE)
+read_addresses(x, filename_root = "", verbose = FALSE)
 }
 \arguments{
   \item{x}{references data.frame that should contain three
@@ -23,14 +23,13 @@
   long-running calls to the function}
 }
 \description{
-  \code{read_addresses} This function is based on the
-  geoPlot addrListLookup() function, and takes an address
-  string and uses the Google Maps API to geocode the
-  address if possible.  Though the geoPlot package
-  addrListLookup() function works, it seems inconsistent in
-  the way it handles returns, especially in bulk, so I'm
-  going to redefine it adding in a wait period, re-test,
-  and an ability to simplify the address down to
-  city/state/country.
+\code{read_addresses} This function is based on the geoPlot
+addrListLookup() function, and takes an address string and
+uses the Google Maps API to geocode the address if
+possible.  Though the geoPlot package addrListLookup()
+function works, it seems inconsistent in the way it handles
+returns, especially in bulk, so I'm going to redefine it
+adding in a wait period, re-test, and an ability to
+simplify the address down to city/state/country.
 }
 
