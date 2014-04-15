@@ -2,7 +2,7 @@
 \alias{refnet_geocode}
 \title{Uses the Google Maps API to process a data.frame of addresses and attempts to geocode them}
 \usage{
-  refnet_geocode(x, verbose = FALSE)
+refnet_geocode(x, verbose = FALSE)
 }
 \arguments{
   \item{x}{references data.frame that should contain three
@@ -18,11 +18,10 @@
   long-running calls to the function}
 }
 \description{
-  \code{refnet_geocode} This function is based on the
-  geoPlot geoAddress() function, and takes an address
-  string and uses the Google Maps API to geocode the
-  address if possible.  Unlike the original function this
-  one saves all of the first Placemark data returned for
-  further use.
+\code{refnet_geocode} This function is based on the geoPlot
+geoAddress() function, and takes an address string and uses
+the Google Maps API to geocode the address if possible.
+Unlike the original function this one saves all of the
+first Placemark data returned for further use.
 }
 

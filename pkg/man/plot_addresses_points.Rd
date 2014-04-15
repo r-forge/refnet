@@ -2,7 +2,7 @@
 \alias{plot_addresses_points}
 \title{Plot address point locations on world map}
 \usage{
-  plot_addresses_points(addresses)
+plot_addresses_points(addresses)
 }
 \arguments{
   \item{addresses}{output from the read_addresses()
@@ -10,8 +10,8 @@
   longitude locations.}
 }
 \description{
-  \code{plot_addresses_points} This function plots an
-  addresses data.frame object by point overlaid on the
-  countries of the world.
+\code{plot_addresses_points} This function plots an
+addresses data.frame object by point overlaid on the
+countries of the world.
 }
 
