@@ -1,17 +1,23 @@
 ## This is EB's edit's to the instructions on using refnet Forrest wrote up.
+## Don't forget that to add your commits to the fork you need to do the following: 
+## In RStudio menus go to "Tools"->"Shell" and type the following: git push origin proposed-updates
 
 ##	Set this to wherever you unzipped the archive folders (not /src):
 # setwd("C:/tmp")
-
-
-detach(package:refnet, unload=TRUE)
-remove.packages("refnet")
-# Original files
+# detach(package:refnet, unload=TRUE)
+# remove.packages("refnet")
+## Original files
 #install.packages("~/Desktop/refnet_0.6.tar.gz", repos = NULL, type="source")
-
 # Unzipped packages
 # install.packages("~/Desktop/refnet", repos = NULL, type="source")
 #Should only have to do above once.
+
+## TO INSTALL PACKAGE FROM GITHUB (added by EB after forking refnet)
+## from http://kbroman.org/pkg_primer/pages/github.html
+
+# Load the devtools package
+library(devtools)
+install_github("embruna/refnet", subdir="pkg")
 require(refnet)
 
 ?refnet
@@ -26,19 +32,26 @@ require(refnet)
 ## time they had submitted the paper). This and the greater updtake of ORCID than other ID numbers makes it the best 
 ## option for disambiguating author names.
 
+# This uses some sample datasets posted to guthub Use package RCurl dowload them
+# see: https://www.r-bloggers.com/data-on-github-the-easy-way-to-make-your-data-available/ 
+library(RCurl)
+ecuador.url <- "https://raw.github.com/embruna/refnet/proposed-updates/pkg/Data/Ecuador.txt"
+ecuador.data<- getURL(ecuador.url)   
 
-ecuador_references <- read_references("data/Ecuador.txt", dir=FALSE, filename_root="output/ecuador")
-output <- read_authors(ecuador_references, filename_root="output/ecuador")
+# In the original refnet you have a folder in your working directory with "data"
+# so I am seeting my wd to be the Rstudio Project Folder.
+ecuador_references <- read_references("./pkg/Data/ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
+output <- read_authors(ecuador_references, filename_root="./pkg/output/ecuador")
 ecuador_authors <- output$authors
 ecuador_authors__references <- output$authors__references
 
-eb_references <- read_references("data/EBdata/eb")
-output <- read_authors(eb_references, filename_root="output/eb")
+eb_references <- read_references("./pkg/Data/EBpubs.txt", dir=FALSE, filename_root="./pkg/output/eb")
+output <- read_authors(eb_references, filename_root="./pkg/output/eb")
 eb <- output$authors
 eb_authors__references <- output$authors__references
 
-peru_references <- read_references("data/peru.txt", dir=FALSE, filename_root="output/peru")
-output <- read_authors(peru_references, filename_root="output/peru")
+peru_references <- read_references("./pkg/Data/peru.txt", dir=FALSE, filename_root="./pkg/output/peru")
+output <- read_authors(peru_references, filename_root="./pkg/output/peru")
 peru_authors <- output$authors
 peru_authors__references <- output$authors__references
 
