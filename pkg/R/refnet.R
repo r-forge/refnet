@@ -1,3 +1,7 @@
+####
+## 12 Janury 2017: These are updates to the refnet project by Emilio Bruna
+## including the use of ORCID ID nunmbers to disambiguate author names.
+
 #####
 ##	BEGIN: .onLoad():
 
