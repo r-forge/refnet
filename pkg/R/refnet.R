@@ -91,7 +91,9 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 		"PT" = character(0),
 		"PU" = character(0),
 		"PY" = character(0),
-		"RI" = character(0),
+		"RI" = character(0),  # original field code for Thomson-Reuters ResearcherID
+	  "RID" = character(0), # New field code for Thomson-Reuters ResearcherID)
+	  "OI"= character(0),   # New field code for ORCID ID 
 		"RP" = character(0),
 		"SC" = character(0),
 		"SI" = character(0),
