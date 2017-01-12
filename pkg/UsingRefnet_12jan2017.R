@@ -19,6 +19,14 @@ require(refnet)
 ##	This reads in single files. Can specify a directory & set dir=TRUE flag to read in entire directory of files.
 ##	If the filename_root argument is not "" then it is used to create the root filenames for CSV output:
 
+## EB: I have uploaded three sample datafiles: EBdata, Peru, and Ecuador. They include one that was originally used by FS
+## to test-drive refnet, one that got hung up because of the change by T-R in how they coded ResearcherID (Peru)
+## and one downloaded from WOS on 11 jan 2016 that has the new ResearchID tag AND has the ORCID ID field code.
+## Note that T-R adds ORCID ID all article records retroactively (i.e., even if person didn't have an ORCID ID at the 
+## time they had submitted the paper). This and the greater updtake of ORCID than other ID numbers makes it the best 
+## option for disambiguating author names.
+
+
 ecuador_references <- read_references("data/Ecuador.txt", dir=FALSE, filename_root="output/ecuador")
 output <- read_authors(ecuador_references, filename_root="output/ecuador")
 ecuador_authors <- output$authors
