@@ -20,13 +20,13 @@
 library(devtools)
 
 # # This installs the original (install_github points to the master branch)
-install_github("embruna/refnet", subdir="pkg") 
+# install_github("embruna/refnet", subdir="pkg") 
 
 # This installs the package from the "proposed-updates" branch 
 # Trying to figure out the correct syntax for dfoing this:
-devtools::install_github("embruna/refnet/pkg@proposed-updates")
-devtools::install_github("embruna/refnet", ref = "proposed-updates", subdir = "pkg")
-devtools::install_github("embruna/refnet", ref = "tree/proposed-updates", subdir = "pkg")
+devtools::install_github("embruna/refnet/pkg@proposed-updates") # OR can do like this
+# devtools::install_github("embruna/refnet", ref = "proposed-updates", subdir = "pkg")
+
 
 require(refnet)
 # to check can run read_references
@@ -35,7 +35,6 @@ read_references
 # read_references uncomment this to see what code is being read in.
 
 ?refnet #Package info
-read_references()
 
 ##	This reads in single files. Can specify a directory & set dir=TRUE flag to read in entire directory of files.
 ##	If the filename_root argument is not "" then it is used to create the root filenames for CSV output:
@@ -57,7 +56,10 @@ ecuador.data<- getURL(ecuador.url)
 
 # In the original refnet you have a folder in your working directory with "data"
 # so I am seeting my wd to be the Rstudio Project Folder.
-ecuador_references <- read_references("./pkg/Data/ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
+
+ecuador_references <- read_references("pkg/data/Ecuador.txt", dir=FALSE, filename_root="pkg/output/ecuador")
+ecuador_references <- read_references("./pkg/Data/Ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
+
 output <- read_authors(ecuador_references, filename_root="./pkg/output/ecuador")
 ecuador_authors <- output$authors
 ecuador_authors__references <- output$authors__references
