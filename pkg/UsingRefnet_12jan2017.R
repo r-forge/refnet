@@ -53,12 +53,10 @@ read_references
 library(RCurl)
 ecuador.url <- "https://raw.github.com/embruna/refnet/proposed-updates/pkg/Data/Ecuador.txt"
 ecuador.data<- getURL(ecuador.url)   
-
-# In the original refnet you have a folder in your working directory with "data"
-# so I am seeting my wd to be the Rstudio Project Folder.
-
+# 
+# WTF why wont it load.
 ecuador_references <- read_references("pkg/data/Ecuador.txt", dir=FALSE, filename_root="pkg/output/ecuador")
-ecuador_references <- read_references("./pkg/Data/Ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
+ecuador_references <- read_references("./Data/Ecuador.txt", dir=FALSE, filename_root="./output/ecuador")
 
 output <- read_authors(ecuador_references, filename_root="./pkg/output/ecuador")
 ecuador_authors <- output$authors
