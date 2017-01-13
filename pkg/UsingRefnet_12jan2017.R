@@ -1,26 +1,41 @@
 ## This is EB's edit's to the instructions on using refnet Forrest wrote up.
 ## Don't forget that to add your commits to the fork you need to do the following: 
 ## In RStudio menus go to "Tools"->"Shell" and type the following: git push origin proposed-updates
+## See: http://r-bio.github.io/intro-git-rstudio/ for more info.
 
-##	Set this to wherever you unzipped the archive folders (not /src):
+## THis is Forrest's original instructions for getting started
+#	Set this to wherever you unzipped the archive folders (not /src):
 # setwd("C:/tmp")
 # detach(package:refnet, unload=TRUE)
 # remove.packages("refnet")
-## Original files
-#install.packages("~/Desktop/refnet_0.6.tar.gz", repos = NULL, type="source")
+# Original files
+# install.packages("~/Desktop/refnet_0.6.tar.gz", repos = NULL, type="source")
 # Unzipped packages
 # install.packages("~/Desktop/refnet", repos = NULL, type="source")
-#Should only have to do above once.
+# Should only have to do above once.
 
 ## TO INSTALL PACKAGE FROM GITHUB (added by EB after forking refnet)
 ## from http://kbroman.org/pkg_primer/pages/github.html
-
 # Load the devtools package
 library(devtools)
-install_github("embruna/refnet", subdir="pkg")
-require(refnet)
 
-?refnet
+# # This installs the original (install_github points to the master branch)
+install_github("embruna/refnet", subdir="pkg") 
+
+# This installs the package from the "proposed-updates" branch 
+# Trying to figure out the correct syntax for dfoing this:
+devtools::install_github("embruna/refnet/pkg@proposed-updates")
+devtools::install_github("embruna/refnet", ref = "proposed-updates", subdir = "pkg")
+devtools::install_github("embruna/refnet", ref = "tree/proposed-updates", subdir = "pkg")
+
+require(refnet)
+# to check can run read_references
+read_references
+
+# read_references uncomment this to see what code is being read in.
+
+?refnet #Package info
+read_references()
 
 ##	This reads in single files. Can specify a directory & set dir=TRUE flag to read in entire directory of files.
 ##	If the filename_root argument is not "" then it is used to create the root filenames for CSV output:
@@ -54,6 +69,18 @@ peru_references <- read_references("./pkg/Data/peru.txt", dir=FALSE, filename_ro
 output <- read_authors(peru_references, filename_root="./pkg/output/peru")
 peru_authors <- output$authors
 peru_authors__references <- output$authors__references
+
+##############################################################################################
+##########################           NEXT STEPS (12 jan 2017)             #####################
+# 1) the researcherID is not being read in correctly due to T-R changing from RID to RI...
+# 2) ...but it's a moot point, since we will be changing to ORCID ID to help disambiguate names
+###############################################################################################
+
+
+
+
+
+
 
 
 ##	After reading the files in you can check the ecuador_authors.csv file
