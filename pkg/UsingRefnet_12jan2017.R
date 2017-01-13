@@ -49,6 +49,8 @@ read_references()
 
 # This uses some sample datasets posted to guthub Use package RCurl dowload them
 # see: https://www.r-bloggers.com/data-on-github-the-easy-way-to-make-your-data-available/ 
+
+# THIS IS NOT WORKING
 library(RCurl)
 ecuador.url <- "https://raw.github.com/embruna/refnet/proposed-updates/pkg/Data/Ecuador.txt"
 ecuador.data<- getURL(ecuador.url)   
