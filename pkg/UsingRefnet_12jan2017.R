@@ -24,8 +24,8 @@ library(devtools)
 
 # This installs the package from the "proposed-updates" branch 
 # Trying to figure out the correct syntax for dfoing this:
-devtools::install_github("embruna/refnet/pkg@proposed-updates") # OR can do like this
-# devtools::install_github("embruna/refnet", ref = "proposed-updates", subdir = "pkg")
+# devtools::install_github("embruna/refnet/pkg@proposed-updates") # OR can do like this
+devtools::install_github("embruna/refnet", ref = "proposed-updates", subdir = "pkg")
 
 
 require(refnet)
@@ -51,12 +51,12 @@ read_references
 
 # THIS IS NOT WORKING
 library(RCurl)
-ecuador.url <- "https://raw.github.com/embruna/refnet/proposed-updates/pkg/Data/Ecuador.txt"
-ecuador.data<- getURL(ecuador.url)   
+eb.url <- "https://raw.github.com/embruna/refnet/proposed-updates/data/EBpubs.txt"
+eb.data<- getURL(eb.url)   
 # 
-# WTF why wont it load.
+
 ecuador_references <- read_references("pkg/data/Ecuador.txt", dir=FALSE, filename_root="pkg/output/ecuador")
-ecuador_references <- read_references("./Data/Ecuador.txt", dir=FALSE, filename_root="./output/ecuador")
+ecuador_references <- read_references("./pkg/data/Ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
 
 output <- read_authors(ecuador_references, filename_root="./pkg/output/ecuador")
 ecuador_authors <- output$authors
