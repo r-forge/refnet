@@ -261,6 +261,7 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			}
 			
 			
+
 			##	If this is the end of a record then add any per-record items and
 			##		advance our row:
 			if (field == "ER") {
