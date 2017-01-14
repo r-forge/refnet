@@ -240,7 +240,11 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 				##	... if it is then append this line's data to the field in our output:
 				output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
 			}
-	
+	    # The reason that the RI and OI fields aren't being read in properly is because the text files include extra spaces 
+			# after they carriage retunr the longer records to the next line. 
+			# In ebpubs record WOS: "WOS:000269700500018
+			# OI should be Dattilo, Wesley/0000-0002-4758-4379; Bruna, Emilio/0000-0003-3381-8477; Vasconcelos, Heraldo/0000-0001-6969-7131; Izzo, Thiago/0000-0002-4613-3787
+			
 			##	If this is the end of a record then add any per-record items and
 			##		advance our row:
 			if (field == "ER") {
@@ -298,8 +302,8 @@ read_authors <- function(references, filename_root="") {
 		"C1" = character(0),
 		"RP" = character(0),
 		"RI" = character(0),
-		"RID" = character(0), # New field code for Thomson-Reuters ResearcherID)
-		"OI"= character(0),  
+		"RID" = character(0), # added by EB
+		"OI"= character(0),  # added by EB
 		stringsAsFactors=FALSE
 	)
 	
@@ -308,6 +312,7 @@ read_authors <- function(references, filename_root="") {
 		"UT" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
+		"OI" = character(0), #added by EB
 		"Author_Order" = numeric(0),
 		stringsAsFactors=FALSE
 	)
@@ -349,8 +354,7 @@ read_authors <- function(references, filename_root="") {
 		
 		##	Process author Researcher ID fields:
 		# RI <- unlist(strsplit(references[ref,]$RI, "; "))
-		RI <- unlist(strsplit(references[ref,]$RI, "; ", , fixed=TRUE)) #EB: adding this to try and keep all researcher IDS 
-		
+		  OI <- unlist(strsplit(references[ref,]$OI, "; ")) #EB editing to make it Orcid ID instead of TR ResearcherID
 		
 		##	Now add all authors to our author_list and author_refdata_link 
 		##		tables:
@@ -402,26 +406,27 @@ read_authors <- function(references, filename_root="") {
 			authors[i,"RP"] <- paste0(RP_address[ grep(authors_AU[aut], RP) ], collapse="\n")
 
 			
-			authors[i,"RI"] <- ""
+			# authors[i,"RI"] <- ""
+			authors[i,"OI"] <- "" # Added EB
 
 			##	If we have Researcher ID information, we'll try to match it to
 			##		individual authors:
-			if (!is.na(RI[1])) {
+			if (!is.na(OI[1])) {
 				Similarity <- 0
-				rid_match <- ""
+				oid_match <- ""
 
-				for (rid in 1:length(RI)) {
+				for (oid in 1:length(OI)) {
 					##	More sophisticated similarity measures could be devised here
 					##		but we'll use a canned distance composite from the 
 					##		RecordLinkage package:
-					newSimilarity <- jarowinkler(RI[rid], authors[i,"AF"])
+					newSimilarity <- jarowinkler(OI[oid], authors[i,"AF"])
 					
 					if ( (newSimilarity > 0.8) & (newSimilarity > Similarity) ) {
 						Similarity <- newSimilarity
-						rid_match <- RI[rid]
+						rid_match <- OI[oid]
 					}
 				}
-				authors[i,"RI"] <- rid_match
+				authors[i,"OI"] <- oid_match
 			}
 		
 			

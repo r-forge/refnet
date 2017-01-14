@@ -49,25 +49,18 @@ read_references
 # This uses some sample datasets posted to guthub Use package RCurl dowload them
 # see: https://www.r-bloggers.com/data-on-github-the-easy-way-to-make-your-data-available/ 
 
-# THIS IS NOT WORKING
-library(RCurl)
-eb.url <- "https://raw.github.com/embruna/refnet/proposed-updates/data/EBpubs.txt"
-eb.data<- getURL(eb.url)   
-# 
 
-ecuador_references <- read_references("pkg/data/Ecuador.txt", dir=FALSE, filename_root="pkg/output/ecuador")
-ecuador_references <- read_references("./pkg/data/Ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
-
+ecuador_references <- read_references("./data/Ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
 output <- read_authors(ecuador_references, filename_root="./pkg/output/ecuador")
 ecuador_authors <- output$authors
 ecuador_authors__references <- output$authors__references
 
-eb_references <- read_references("./pkg/Data/EBpubs.txt", dir=FALSE, filename_root="./pkg/output/eb")
+eb_references <- read_references("./data/EBpubs.txt", dir=FALSE, filename_root="./pkg/output/eb")
 output <- read_authors(eb_references, filename_root="./pkg/output/eb")
 eb <- output$authors
 eb_authors__references <- output$authors__references
 
-peru_references <- read_references("./pkg/Data/peru.txt", dir=FALSE, filename_root="./pkg/output/peru")
+peru_references <- read_references("./data/peru.txt", dir=FALSE, filename_root="./pkg/output/peru")
 output <- read_authors(peru_references, filename_root="./pkg/output/peru")
 peru_authors <- output$authors
 peru_authors__references <- output$authors__references
