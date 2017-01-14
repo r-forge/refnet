@@ -247,14 +247,16 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			# output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
 			# with this line: 
 		  # output[i, field] <- paste(output[i, field], line_text, "\\s+", sep="")
-			# but this left \s+ in between. 
+			# but this left \s+ in between. After reading and experimenting I just deleted the "\n"
+			# or "\\s+" completeley...and...voila!
+			# Then realized wasn't being read into *_authors, so added a space as seperator after ;
 			# --------------
 			
 			##	Check to see if the current field is one we are saving to output:
 			if (field %in% names(output)) {
 				##	... if it is then append this line's data to the field in our output:
 				# output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
-				output[i, field] <- paste(output[i, field], line_text, sep="")
+				output[i, field] <- paste(output[i, field], line_text, sep=" ")
 			}
 			
 			
