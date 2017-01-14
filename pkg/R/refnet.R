@@ -298,6 +298,8 @@ read_authors <- function(references, filename_root="") {
 		"C1" = character(0),
 		"RP" = character(0),
 		"RI" = character(0),
+		"RID" = character(0), # New field code for Thomson-Reuters ResearcherID)
+		"OI"= character(0),  
 		stringsAsFactors=FALSE
 	)
 	
@@ -346,7 +348,8 @@ read_authors <- function(references, filename_root="") {
 		RP_address <- gsub("^.*\\(reprint author\\), (.*)$", "\\1", RP)
 		
 		##	Process author Researcher ID fields:
-		RI <- unlist(strsplit(references[ref,]$RI, "; "))
+		# RI <- unlist(strsplit(references[ref,]$RI, "; "))
+		RI <- unlist(strsplit(references[ref,]$RI, "; ", , fixed=TRUE)) #EB: adding this to try and keep all researcher IDS 
 		
 		
 		##	Now add all authors to our author_list and author_refdata_link 
