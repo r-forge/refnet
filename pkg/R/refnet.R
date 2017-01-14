@@ -157,7 +157,7 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			#	read_line <- substr(read_line, 4, nchar(read_line))
 			#}
 			###	Check for alternate UTF-8 encoding:
-			#if (substr(read_line, 1, 3) == "ï»¿") {
+			#if (substr(read_line, 1, 3) == "ÿ") {
 			#	read_line <- substr(read_line, 4, nchar(read_line))
 			#}
 
@@ -235,17 +235,31 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 	
 			}
 	
+			
+			# --------------
+			#   EB Comment 14 jan 2017
+			# The reason that the RI and OI fields aren't being read in properly is because the text files include extra spaces 
+			# after they carriage retunr the longer records to the next line. 
+			# In ebpubs record WOS: "WOS:000269700500018
+			# OI should be Dattilo, Wesley/0000-0002-4758-4379; Bruna, Emilio/0000-0003-3381-8477; Vasconcelos, Heraldo/0000-0001-6969-7131; Izzo, Thiago/0000-0002-4613-3787
+			# The same is true of names - only first one was being read in.
+			# I somehow got it to read all the names and orcids in by replacing this line below:
+			# output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
+			# with this line: 
+		  # output[i, field] <- paste(output[i, field], line_text, "\\s+", sep="")
+			# but this left \s+ in between. 
+			# --------------
+			
+			
+			
+			
 			##	Check to see if the current field is one we are saving to output:
 			if (field %in% names(output)) {
 				##	... if it is then append this line's data to the field in our output:
 				# output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
-				output[i, field] <- paste(output[i, field], line_text, "\\s+", sep="")
-				
+				output[i, field] <- paste(output[i, field], line_text, "\", sep="")
 			}
-	    # The reason that the RI and OI fields aren't being read in properly is because the text files include extra spaces 
-			# after they carriage retunr the longer records to the next line. 
-			# In ebpubs record WOS: "WOS:000269700500018
-			# OI should be Dattilo, Wesley/0000-0002-4758-4379; Bruna, Emilio/0000-0003-3381-8477; Vasconcelos, Heraldo/0000-0001-6969-7131; Izzo, Thiago/0000-0002-4613-3787
+			
 			
 			##	If this is the end of a record then add any per-record items and
 			##		advance our row:
