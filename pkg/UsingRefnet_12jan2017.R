@@ -49,7 +49,7 @@ read_references
 # This uses some sample datasets posted to guthub Use package RCurl dowload them
 # see: https://www.r-bloggers.com/data-on-github-the-easy-way-to-make-your-data-available/ 
 
-
+# the first argument of "read_references" should point to the folder where your data files are installed. 
 ecuador_references <- read_references("./data/Ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
 output <- read_authors(ecuador_references, filename_root="./pkg/output/ecuador")
 ecuador_authors <- output$authors
