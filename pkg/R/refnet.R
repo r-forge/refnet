@@ -254,8 +254,9 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			if (field %in% names(output)) {
 				##	... if it is then append this line's data to the field in our output:
 				# output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
-				output[i, field] <- paste(output[i, field], line_text, "\\s+$", sep="")
+				output[i, field] <- paste(output[i, field], line_text, sep="")
 			}
+			
 			
 
 			##	If this is the end of a record then add any per-record items and
