@@ -148,9 +148,9 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 		##		it doesn't respsect the BOM characters.  So we'll just read 
 		##		the files in with no encoding specified and strip the BOM if
 		##		it's there:
-		#read_line <- readLines(in_file, n=1, warn=FALSE, encoding="UTF-8")
-		read_line <- readLines(in_file, n=1, warn=FALSE)
-		
+		read_line <- readLines(in_file, n=1, warn=FALSE, encoding="UTF-8") # EB trying this on instead of below. 
+		# read_line <- readLines(in_file, n=1, warn=FALSE)
+		# 
 		if (length(read_line) > 0) {
 			###	Check for UTF-8 encoding:
 			#if (substr(read_line, 1, 3) == "ï»¿") {
@@ -238,8 +238,7 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			##	Check to see if the current field is one we are saving to output:
 			if (field %in% names(output)) {
 				##	... if it is then append this line's data to the field in our output:
-				# output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
-			  output[i, field] <- paste(output[i, field], line_text, "'\\s+'", sep="")
+				output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
 			}
 	    # The reason that the RI and OI fields aren't being read in properly is because the text files include extra spaces 
 			# after they carriage retunr the longer records to the next line. 
