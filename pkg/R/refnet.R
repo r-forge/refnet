@@ -301,8 +301,8 @@ read_authors <- function(references, filename_root="") {
 		"EM" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
-		"RI" = character(0),
-		"RID" = character(0), # added by EB
+		# "RI" = character(0),
+		# "RID" = character(0), # added by EB
 		"OI"= character(0),  # added by EB
 		stringsAsFactors=FALSE
 	)
@@ -423,7 +423,7 @@ read_authors <- function(references, filename_root="") {
 					
 					if ( (newSimilarity > 0.8) & (newSimilarity > Similarity) ) {
 						Similarity <- newSimilarity
-						rid_match <- OI[oid]
+						oid_match <- OI[oid]
 					}
 				}
 				authors[i,"OI"] <- oid_match
