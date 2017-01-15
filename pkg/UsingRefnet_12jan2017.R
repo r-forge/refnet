@@ -25,6 +25,7 @@ library(devtools)
 # This installs the package from the "proposed-updates" branch 
 # Trying to figure out the correct syntax for dfoing this:
 # devtools::install_github("embruna/refnet/pkg@proposed-updates") # OR can do like this
+
 devtools::install_github("embruna/refnet", ref = "proposed-updates", subdir = "pkg")
 
 

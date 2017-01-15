@@ -157,7 +157,7 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			#	read_line <- substr(read_line, 4, nchar(read_line))
 			#}
 			###	Check for alternate UTF-8 encoding:
-			#if (substr(read_line, 1, 3) == "ÿ") {
+			#if (substr(read_line, 1, 3) == "ï¿½") {
 			#	read_line <- substr(read_line, 4, nchar(read_line))
 			#}
 
@@ -317,8 +317,8 @@ read_authors <- function(references, filename_root="") {
 		"EM" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
-		# "RI" = character(0),
-		# "RID" = character(0), # added by EB
+	  "RI" = character(0),
+		"RID" = character(0), # added by EB
 		"OI"= character(0),  # added by EB
 		stringsAsFactors=FALSE
 	)
@@ -328,7 +328,9 @@ read_authors <- function(references, filename_root="") {
 		"UT" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
-		"OI" = character(0), #added by EB
+		"RI" = character(0),  # added by EB
+		"RID" = character(0), # added by EB
+		"OI" = character(0),  # added by EB
 		"Author_Order" = numeric(0),
 		stringsAsFactors=FALSE
 	)
@@ -369,7 +371,7 @@ read_authors <- function(references, filename_root="") {
 		RP_address <- gsub("^.*\\(reprint author\\), (.*)$", "\\1", RP)
 		
 		##	Process author Researcher ID fields:
-		# RI <- unlist(strsplit(references[ref,]$RI, "; "))
+		  RI <- unlist(strsplit(references[ref,]$RI, "; "))
 		  OI <- unlist(strsplit(references[ref,]$OI, "; ")) #EB editing to make it Orcid ID instead of TR ResearcherID
 		
 		##	Now add all authors to our author_list and author_refdata_link 
