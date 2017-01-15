@@ -360,6 +360,19 @@ read_authors <- function(references, filename_root="") {
 		references[ref,]$EM <- gsub(";", "\n", references[ref,]$EM)
 		authors_EM <- unlist(strsplit(references[ref,]$EM, "\n"))
 
+		##  Adapt above to orcid id
+		##	The email list is interesting because it seems it has line
+		##		breaks and is "; " delimited.  So we have to clean the line
+		##		a bit to start:
+		references[ref,]$OI <- gsub(" ", "", references[ref,]$OI)
+		references[ref,]$OI <- gsub(";", "\n", references[ref,]$OI)
+		authors_OI <- unlist(strsplit(references[ref,]$OI, "\n"))
+		
+		
+		
+		
+		
+		
 		##	Process contact addresses, the first will be the C1 value
 		##		itself, the second is the address without the names, stripped:
 		C1 <- unlist(strsplit(references[ref,]$C1, "\n"))
