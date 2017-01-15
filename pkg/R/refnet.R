@@ -255,11 +255,11 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			##	Check to see if the current field is one we are saving to output:
 			if (field %in% names(output)) {
 				##	... if it is then append this line's data to the field in our output:
-				# output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
-				output[i, field] <- paste(output[i, field], line_text, sep=" ")
+				 output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
+				# output[i, field] <- paste(output[i, field], line_text, sep=" ")
 			}
 			
-			
+		
 
 			##	If this is the end of a record then add any per-record items and
 			##		advance our row:
