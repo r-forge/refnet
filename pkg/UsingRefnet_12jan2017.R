@@ -61,6 +61,12 @@ output <- read_authors(eb_references, filename_root="./pkg/output/eb")
 eb <- output$authors
 eb_authors__references <- output$authors__references
 
+foo1 <- read.csv("./pkg/output/EB_authors__references.csv", header = TRUE)
+foo2 <- read.csv("./pkg/output/EB_authors.csv", header = TRUE)
+library(dplyr)
+foo3<-full_join(foo1,foo2,by ="AU_ID")
+
+
 peru_references <- read_references("./data/peru.txt", dir=FALSE, filename_root="./pkg/output/peru")
 output <- read_authors(peru_references, filename_root="./pkg/output/peru")
 peru_authors <- output$authors
