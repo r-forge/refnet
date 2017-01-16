@@ -375,18 +375,37 @@ read_authors <- function(references, filename_root="") {
 		  ########################################################
 		  ## TRYING TO SPLIT ORCID ID; using above
 		  ## as example
-		  ##
-		  # OI<-"Ritchie, Michael/0000-0001-7913-8675; Bruna, Emilio/0000-0003-3381-8477;
-		  # Fox, Charles/0000-0002-7545-7967; Rieseberg, Loren/0000-0002-2712-2417;
-		  # Ellison, Aaron/0000-0003-4151-6081"
-		  # foo <- unlist(strsplit(OI, "; "))
+# 		  ##
+# 		  AU<-"Whitlock, Michael C.
+# Bronstein, Judith L.
+# 		  Bruna, Emilio M.
+# 		  Ellison, Aaron M.
+# 		  Fox, Charles W.
+# 		  McPeek, Mark A.
+# 		  Moore, Allen J.
+# 		  Noor, Mohamed A. F.
+# 		  Rausher, Mark D.
+# 		  Rieseberg, Loren H.
+# 		  Ritchie, Michael G.
+# 		  Shaw, Ruth G.
+# 		  "
+# 		  
+# 		  OI<-"Ritchie, Michael/0000-0001-7913-8675; Bruna, Emilio/0000-0003-3381-8477;
+# 		  Fox, Charles/0000-0002-7545-7967; Rieseberg, Loren/0000-0002-2712-2417;
+# 		  Ellison, Aaron/0000-0003-4151-6081"
+# 		  OI
+# 		  
+# 		  OI<-gsub("\n\t\t", "", OI)
+# 		   foo <- unlist(strsplit(OI, "; "))
 		  # The line below works for almost all records but not quite....
-		  #OI <- unlist(strsplit(references[ref,]$OI, "; "))
-		  
-		  references[ref,]$OI <- gsub(" ", "", references[ref,]$OI)
-		  references[ref,]$OI <- gsub(";", "\n", references[ref,]$OI)
-		  OI <- unlist(strsplit(references[ref,]$OI, "\n"))
+		   # 
+		   # references[ref,]$OI <- gsub("\t", "", references[ref,]$OI) #remove the line breaks
+		   # 
+		  references[ref,]$OI <- gsub(" ", "", references[ref,]$OI) #Remove the spaces
+		  references[ref,]$OI <- gsub("\n\t\t","" references[ref,]$OI)  #Change semicolon for \n
+		  references[ref,]$OI <- unlist(strsplit(references[ref,]$OI, ";"))
 
+		  
 		  ########################################################
 		  
 		  
