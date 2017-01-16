@@ -465,6 +465,7 @@ read_authors <- function(references, filename_root="") {
 			  authors[i,"RI"] <- rid_match
 			}
 			
+			
 			# Copied the above for OI (by EB)
 			
 			if (!is.na(OI[1])) {
