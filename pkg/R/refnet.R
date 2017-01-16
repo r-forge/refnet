@@ -462,7 +462,7 @@ read_authors <- function(references, filename_root="") {
 			      rid_match <- RI[rid]
 			    }
 			  }
-			  authors[i,"RI"] <- oid_match
+			  authors[i,"RI"] <- rid_match
 			}
 			
 			# Copied the above for OI (by EB)
