@@ -402,13 +402,13 @@ read_authors <- function(references, filename_root="") {
 		   # references[ref,]$OI <- gsub("\t", "", references[ref,]$OI) #remove the line breaks
 		   # 
 		  
-		  references[ref,]$OI <- gsub(" ", "", references[ref,]$OI) #Remove the spaces
-		  references[ref,]$OI <- gsub("\n","",references[ref,]$OI)  #remove the \n
-		  references[ref,]$OI <- gsub("\t","",references[ref,]$OI)  #remove the \t
-		  references[ref,]$OI <- gsub("\t\t","",references[ref,]$OI)  #remove the \t
-		  references[ref,]$OI <- gsub("\n","",references[ref,]$OI)  #remove the \n
+		  references[ref,]$OI <- gsub("[[:space:]]", "", references[ref,]$OI, fixed=TRUE) #Remove the spaces
+		  # references[ref,]$OI <- gsub("\n","",references[ref,]$OI)  #remove the \n
+		  references[ref,]$OI <- gsub("\t","",references[ref,]$OI, fixed=TRUE)  #remove the \t
+		  #references[ref,]$OI <- gsub("\t\t","",references[ref,]$OI)  #remove the \t
+		  references[ref,]$OI <- gsub("\n","",references[ref,]$OI, fixed=TRUE)  #remove the \n
 		  OI <- unlist(strsplit(references[ref,]$OI, ";"))          #split along the semicolons
-
+		  
 		  ########################################################
 		  
 		  
