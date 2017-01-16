@@ -380,12 +380,13 @@ read_authors <- function(references, filename_root="") {
 		  # Fox, Charles/0000-0002-7545-7967; Rieseberg, Loren/0000-0002-2712-2417;
 		  # Ellison, Aaron/0000-0003-4151-6081"
 		  # foo <- unlist(strsplit(OI, "; "))
-		  OI <- unlist(strsplit(references[ref,]$OI, "; "))
+		  # The line below works for almost all records but not quite....
+		  #OI <- unlist(strsplit(references[ref,]$OI, "; "))
 		  
-		  # references[ref,]$OI <- gsub(" ", "", references[ref,]$OI)
-		  # references[ref,]$OI <- gsub(";", "\n", references[ref,]$EM)
-		  # authors_OI <- unlist(strsplit(references[ref,]$OI, "\n"))
-		  
+		  references[ref,]$OI <- gsub(" ", "", references[ref,]$OI)
+		  references[ref,]$OI <- gsub(";", "\n", references[ref,]$OI)
+		  OI <- unlist(strsplit(references[ref,]$OI, "\n"))
+
 		  ########################################################
 		  
 		  
