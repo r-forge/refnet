@@ -328,9 +328,6 @@ read_authors <- function(references, filename_root="") {
 		"UT" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
-		"RI" = character(0),  # added by EB
-		"RID" = character(0), # added by EB
-		"OI" = character(0),  # added by EB
 		"Author_Order" = numeric(0),
 		stringsAsFactors=FALSE
 	)
@@ -343,7 +340,7 @@ read_authors <- function(references, filename_root="") {
 	for (ref in 1:length(references$UT)) {
 		authors_AU <- unlist(strsplit(references[ref,]$AU, "\n"))
 		authors_AF <- unlist(strsplit(references[ref,]$AF, "\n"))
-
+		
 		##	The new CIW format does not actually fill the AF field, instead
 		##		using the AU field for the full name.  Therefore we'll check it
 		##		and fill AF from AU if it's all NA:
@@ -360,15 +357,18 @@ read_authors <- function(references, filename_root="") {
 		references[ref,]$EM <- gsub(";", "\n", references[ref,]$EM)
 		authors_EM <- unlist(strsplit(references[ref,]$EM, "\n"))
 
-		##  Adapt above to orcid id
+		
+		########################################################
+		## TRYING TO SPLIT ORCID ID; using above
 		##	The email list is interesting because it seems it has line
 		##		breaks and is "; " delimited.  So we have to clean the line
 		##		a bit to start:
+		
 		references[ref,]$OI <- gsub(" ", "", references[ref,]$OI)
-		references[ref,]$OI <- gsub(";", "\n", references[ref,]$OI)
+		references[ref,]$OI <- gsub(";", "\n", references[ref,]$EM)
 		authors_OI <- unlist(strsplit(references[ref,]$OI, "\n"))
 		
-		
+		########################################################
 		
 		
 		
@@ -385,9 +385,8 @@ read_authors <- function(references, filename_root="") {
 		
 		##	Process author Researcher ID fields:
 		  RI <- unlist(strsplit(references[ref,]$RI, "; "))
-		  OI <- unlist(strsplit(references[ref,]$OI, "; ")) #EB editing to make it Orcid ID instead of TR ResearcherID
-		
-		##	Now add all authors to our author_list and author_refdata_link 
+		 
+		  		##	Now add all authors to our author_list and author_refdata_link 
 		##		tables:
 		for (aut in 1:length(authors_AU)) {
 			i <- i + 1
