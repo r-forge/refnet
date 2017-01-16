@@ -459,7 +459,11 @@ read_authors <- function(references, filename_root="") {
 			    
 			    if ( (newSimilarity > 0.8) & (newSimilarity > Similarity) ) {
 			      Similarity <- newSimilarity
+<<<<<<< HEAD
 			      rid_match <- RI[rid]
+=======
+			      oid_match <- RI[rid]
+>>>>>>> 1f64e2ce0d71879e7c17121c6361e0b36779526e
 			    }
 			  }
 			  authors[i,"RI"] <- oid_match
