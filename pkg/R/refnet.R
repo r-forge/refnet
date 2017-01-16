@@ -329,7 +329,6 @@ read_authors <- function(references, filename_root="") {
 		"C1" = character(0),
 		"RP" = character(0),
 		"Author_Order" = numeric(0),
-		"ORCID"  #Added by EB
 		stringsAsFactors=FALSE
 	)
 
@@ -382,7 +381,8 @@ read_authors <- function(references, filename_root="") {
 		  references[ref,]$OI <- gsub("\t","",references[ref,]$OI, fixed=TRUE)  #remove the \t
 		  references[ref,]$OI <- gsub("\n","",references[ref,]$OI, fixed=TRUE)  #remove the \n
 		  OI <- unlist(strsplit(references[ref,]$OI, ";"))          #split along the semicolons
-		  
+		  #
+		  #
 		  ########################################################
 		  
 		  
@@ -483,7 +483,6 @@ read_authors <- function(references, filename_root="") {
 			authors__references[i,"C1"] <- authors[i,"C1"]
 			authors__references[i,"RP"] <- authors[i,"RP"]
 			authors__references[i,"Author_Order"] <- aut
-			authors__references[i,"ORCID"] <- references[ref,"OI"] #ADDED BY EB
 			
 		}
 	}
