@@ -356,22 +356,6 @@ read_authors <- function(references, filename_root="") {
 		references[ref,]$EM <- gsub(" ", "", references[ref,]$EM)
 		references[ref,]$EM <- gsub(";", "\n", references[ref,]$EM)
 		authors_EM <- unlist(strsplit(references[ref,]$EM, "\n"))
-
-		
-		########################################################
-		## TRYING TO SPLIT ORCID ID; using above
-		##	The email list is interesting because it seems it has line
-		##		breaks and is "; " delimited.  So we have to clean the line
-		##		a bit to start:
-		
-		references[ref,]$OI <- gsub(" ", "", references[ref,]$OI)
-		references[ref,]$OI <- gsub(";", "\n", references[ref,]$EM)
-		authors_OI <- unlist(strsplit(references[ref,]$OI, "\n"))
-		
-		########################################################
-		
-		
-		
 		
 		##	Process contact addresses, the first will be the C1 value
 		##		itself, the second is the address without the names, stripped:
@@ -386,6 +370,27 @@ read_authors <- function(references, filename_root="") {
 		##	Process author Researcher ID fields:
 		  RI <- unlist(strsplit(references[ref,]$RI, "; "))
 		 
+		  
+		  
+		  ########################################################
+		  ## TRYING TO SPLIT ORCID ID; using above
+		  ## as example
+		  ##
+		  # OI<-"Ritchie, Michael/0000-0001-7913-8675; Bruna, Emilio/0000-0003-3381-8477;
+		  # Fox, Charles/0000-0002-7545-7967; Rieseberg, Loren/0000-0002-2712-2417;
+		  # Ellison, Aaron/0000-0003-4151-6081"
+		  # foo <- unlist(strsplit(OI, "; "))
+		  OI <- unlist(strsplit(references[ref,]$OI, "; "))
+		  
+		  # references[ref,]$OI <- gsub(" ", "", references[ref,]$OI)
+		  # references[ref,]$OI <- gsub(";", "\n", references[ref,]$EM)
+		  # authors_OI <- unlist(strsplit(references[ref,]$OI, "\n"))
+		  
+		  ########################################################
+		  
+		  
+		  
+		  
 		  		##	Now add all authors to our author_list and author_refdata_link 
 		##		tables:
 		for (aut in 1:length(authors_AU)) {
