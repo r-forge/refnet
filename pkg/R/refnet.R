@@ -309,11 +309,11 @@ read_authors <- function(references, filename_root="") {
 	##		"Thomson Reuters Web of Knowledge" FN format and the "ISI Export
 	##		Format" both of which are version 1.0:
 	authors <- data.frame(
-		"AU_ID" = character(0),
+	  "AU" = character(0),
+	  "AU_ID" = character(0),
 		"AU_ID_Dupe" = character(0),
 		"Similarity" = character(0),
 		"AF" = character(0),
-		"AU" = character(0),
 		"EM" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
@@ -438,11 +438,35 @@ read_authors <- function(references, filename_root="") {
 			authors[i,"RP"] <- paste0(RP_address[ grep(authors_AU[aut], RP) ], collapse="\n")
 
 			
-			# authors[i,"RI"] <- ""
+			authors[i,"RI"] <- ""
 			authors[i,"OI"] <- "" # Added EB
 
 			##	If we have Researcher ID information, we'll try to match it to
 			##		individual authors:
+			
+			
+			##	If we have Researcher ID information, we'll try to match it to
+			##		individual authors:
+			if (!is.na(RI[1])) {
+			  Similarity <- 0
+			  rid_match <- ""
+			  
+			  for (rid in 1:length(RI)) {
+			    ##	More sophisticated similarity measures could be devised here
+			    ##		but we'll use a canned distance composite from the 
+			    ##		RecordLinkage package:
+			    newSimilarity <- jarowinkler(RI[rid], authors[i,"AF"])
+			    
+			    if ( (newSimilarity > 0.8) & (newSimilarity > Similarity) ) {
+			      Similarity <- newSimilarity
+			      oid_match <- RI[rid]
+			    }
+			  }
+			  authors[i,"RI"] <- oid_match
+			}
+			
+			# Copied the above for OI (by EB)
+			
 			if (!is.na(OI[1])) {
 				Similarity <- 0
 				oid_match <- ""
