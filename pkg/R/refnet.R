@@ -403,7 +403,11 @@ read_authors <- function(references, filename_root="") {
 		   # 
 		  references[ref,]$OI <- gsub(" ", "", references[ref,]$OI) #Remove the spaces
 		  references[ref,]$OI <- gsub("\n\t\t","" references[ref,]$OI)  #Change semicolon for \n
+<<<<<<< HEAD
 		  references[ref,]$OI <- unlist(strsplit(references[ref,]$OI, ";"))
+=======
+		  OI <- unlist(strsplit(references[ref,]$OI, ";"))
+>>>>>>> fe0e9eb6be037222219f8d53cc379ec687f106fc
 
 		  
 		  ########################################################
