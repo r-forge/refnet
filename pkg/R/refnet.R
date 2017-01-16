@@ -329,6 +329,7 @@ read_authors <- function(references, filename_root="") {
 		"C1" = character(0),
 		"RP" = character(0),
 		"Author_Order" = numeric(0),
+		"ORCID"  #Added by EB
 		stringsAsFactors=FALSE
 	)
 
@@ -373,39 +374,12 @@ read_authors <- function(references, filename_root="") {
 		  
 		  
 		  ########################################################
-		  ## TRYING TO SPLIT ORCID ID; using above
-		  ## as example
-# 		  ##
-# 		  AU<-"Whitlock, Michael C.
-# Bronstein, Judith L.
-# 		  Bruna, Emilio M.
-# 		  Ellison, Aaron M.
-# 		  Fox, Charles W.
-# 		  McPeek, Mark A.
-# 		  Moore, Allen J.
-# 		  Noor, Mohamed A. F.
-# 		  Rausher, Mark D.
-# 		  Rieseberg, Loren H.
-# 		  Ritchie, Michael G.
-# 		  Shaw, Ruth G.
-# 		  "
-# 		  
-# 		  OI<-"Ritchie, Michael/0000-0001-7913-8675; Bruna, Emilio/0000-0003-3381-8477;
-# 		  Fox, Charles/0000-0002-7545-7967; Rieseberg, Loren/0000-0002-2712-2417;
-# 		  Ellison, Aaron/0000-0003-4151-6081"
-# 		  OI
-# 		  
-# 		  OI<-gsub("\n\t\t", "", OI)
-# 		   foo <- unlist(strsplit(OI, "; "))
-		  # The line below works for almost all records but not quite....
-		   # 
-		   # references[ref,]$OI <- gsub("\t", "", references[ref,]$OI) #remove the line breaks
-		   # 
-		  
+		  #
+		  #
+		  # Added by EB. This splits the ORCID ID apart and adds it to the *_authors.csv file
+		  #
 		  references[ref,]$OI <- gsub("[[:space:]]", "", references[ref,]$OI, fixed=TRUE) #Remove the spaces
-		  # references[ref,]$OI <- gsub("\n","",references[ref,]$OI)  #remove the \n
 		  references[ref,]$OI <- gsub("\t","",references[ref,]$OI, fixed=TRUE)  #remove the \t
-		  #references[ref,]$OI <- gsub("\t\t","",references[ref,]$OI)  #remove the \t
 		  references[ref,]$OI <- gsub("\n","",references[ref,]$OI, fixed=TRUE)  #remove the \n
 		  OI <- unlist(strsplit(references[ref,]$OI, ";"))          #split along the semicolons
 		  
@@ -509,6 +483,8 @@ read_authors <- function(references, filename_root="") {
 			authors__references[i,"C1"] <- authors[i,"C1"]
 			authors__references[i,"RP"] <- authors[i,"RP"]
 			authors__references[i,"Author_Order"] <- aut
+			authors__references[i,"ORCID"] <- references[ref,"OI"] #ADDED BY EB
+			
 		}
 	}
 
