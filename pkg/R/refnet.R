@@ -12,7 +12,7 @@
 	require(rworldmap)
 	require(RecordLinkage)
 	require(Matrix)
-	require(plyr)
+	require(plyr)  #need to update to dplyr?
 	require(igraph)
 	require(network)
 	require(sna)
@@ -239,7 +239,7 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			# --------------
 			#   EB Comment 14 jan 2017
 			# The reason that the RI and OI fields aren't being read in properly is because the text files include extra spaces 
-			# after they carriage retunr the longer records to the next line. 
+			# after they carriage return the longer records to the next line. 
 			# In ebpubs record WOS: "WOS:000269700500018
 			# OI should be Dattilo, Wesley/0000-0002-4758-4379; Bruna, Emilio/0000-0003-3381-8477; Vasconcelos, Heraldo/0000-0001-6969-7131; Izzo, Thiago/0000-0002-4613-3787
 			# The same is true of names - only first one was being read in.
@@ -328,6 +328,8 @@ read_authors <- function(references, filename_root="") {
 		"UT" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
+		"RID" = character(0), # added by EB 2 dec 2017
+		"OI" = character(0), #ADDED EB 18Feb17
 		"Author_Order" = numeric(0),
 		stringsAsFactors=FALSE
 	)
@@ -359,8 +361,8 @@ read_authors <- function(references, filename_root="") {
 		
 		##	Process contact addresses, the first will be the C1 value
 		##		itself, the second is the address without the names, stripped:
-		C1 <- unlist(strsplit(references[ref,]$C1, "\n"))
-		C1_address <- gsub("^\\[.*\\] (.*)$", "\\1", C1)
+		C1 <- unlist(strsplit(references[ref,]$C1, "\n")) 
+		C1_address <- gsub("^\\[.*\\] (.*)$", "\\1", C1)  #This remives the [author 1, author 2, author 3] and leaves just the address.
 		
 		##	Process reprint author address, the first will be the RP value
 		##		itself, the second is the address without the name, stripped:
@@ -428,7 +430,7 @@ read_authors <- function(references, filename_root="") {
 			}
 
 			authors[i,"C1"] <- paste0(C1_address[ grep(authors_AF[aut], C1) ], collapse="\n")
-
+			authors[i,"C1"] <- paste0(C1_address[ grep(authors_AF[aut], C1) ], collapse="\n")
 			##	For first authors, and the case where names are not listed with 
 			##		multiple C1 addresses, pull the first one:
 			if (authors[i,"C1"] == "" & (length(C1_address) == 1 | aut == 1)) {
@@ -507,6 +509,8 @@ read_authors <- function(references, filename_root="") {
 			authors__references[i,"UT"] <- references[ref,"UT"]
 			authors__references[i,"C1"] <- authors[i,"C1"]
 			authors__references[i,"RP"] <- authors[i,"RP"]
+			# authors__references[i,"RI"] <- authors[i,"RI"] # still not parsing out the multuple RI EB 17 feb /2017
+			authors__references[i,"OI"] <- authors[i,"OI"]
 			authors__references[i,"Author_Order"] <- aut
 			
 		}
