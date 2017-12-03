@@ -317,8 +317,8 @@ read_authors <- function(references, filename_root="") {
 		"EM" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
-	  "RI" = character(0),
 		"RID" = character(0), # added by EB
+		"RI" = character(0),
 		"OI"= character(0),  # added by EB
 		stringsAsFactors=FALSE
 	)
@@ -329,6 +329,7 @@ read_authors <- function(references, filename_root="") {
 		"C1" = character(0),
 		"RP" = character(0),
 		"RID" = character(0), # added by EB 2 dec 2017
+		"RI" = character(0), # added by EB 2 dec 2017
 		"OI" = character(0), #ADDED EB 18Feb17
 		"Author_Order" = numeric(0),
 		stringsAsFactors=FALSE
@@ -379,12 +380,20 @@ read_authors <- function(references, filename_root="") {
 		  #
 		  # Added by EB. This splits the ORCID ID apart and adds it to the *_authors.csv file
 		  #
-		  references[ref,]$OI <- gsub("[[:space:]]", "", references[ref,]$OI, fixed=TRUE) #Remove the spaces
-		  references[ref,]$OI <- gsub("\t","",references[ref,]$OI, fixed=TRUE)  #remove the \t
-		  references[ref,]$OI <- gsub("\n","",references[ref,]$OI, fixed=TRUE)  #remove the \n
-		  OI <- unlist(strsplit(references[ref,]$OI, ";"))          #split along the semicolons
+		  # references[ref,]$OI <- gsub("[[:space:]]", "", references[ref,]$OI, fixed=TRUE) #Remove the spaces
+		  # references[ref,]$OI <- gsub("\t","",references[ref,]$OI, fixed=TRUE)  #remove the \t
+		  # references[ref,]$OI <- gsub("\n","",references[ref,]$OI, fixed=TRUE)  #remove the \n
+		  # OI <- unlist(strsplit(references[ref,]$OI, ";"))          #split along the semicolons
+		  # #
+		  ##	The email list is interesting because it seems it has line
+		  ##		breaks and is "; " delimited (and also  ",").  So we have to clean the line
+		  ##		a bit to start:
 		  #
-		  #
+		  references[ref,]$OI <- gsub(" ", "", references[ref,]$OI, fixed=TRUE)
+		  references[ref,]$OI <- gsub("\n"," ", references[ref,]$OI, fixed=TRUE)
+		  references[ref,]$OI <- gsub("; ", ";", references[ref,]$OI, fixed=TRUE)
+		  references[ref,]$OI <- trimws(references[ref,]$OI,which = "both")
+		  OI <- unlist(strsplit(references[ref,]$OI, ";"))  
 		  ########################################################
 		  
 		  
