@@ -371,8 +371,17 @@ read_authors <- function(references, filename_root="") {
 		RP_address <- gsub("^.*\\(reprint author\\), (.*)$", "\\1", RP)
 		
 		##	Process author Researcher ID fields:
-		  RI <- unlist(strsplit(references[ref,]$RI, "; "))
-		 
+		
+		  # RI <- unlist(strsplit(references[ref,]$RI, "; "))
+		  # 
+		  ##	this it wasn't working, but then I realized that the problem with OI was the same as the problem with the emails 
+		  ##		I modified that code to get the spacing right, and it looks like it worked. 2 december 2017
+		  #
+		  references[ref,]$RI <- gsub(" ", "", references[ref,]$RI, fixed=TRUE)
+		  references[ref,]$RI <- gsub("\n"," ", references[ref,]$RI, fixed=TRUE)
+		  references[ref,]$RI <- gsub("; ", ";", references[ref,]$RI, fixed=TRUE)
+		  references[ref,]$RI <- trimws(references[ref,]$RI,which = "both")
+		  RI <- unlist(strsplit(references[ref,]$OI, ";"))  
 		  
 		  
 		  ########################################################
@@ -385,9 +394,8 @@ read_authors <- function(references, filename_root="") {
 		  # references[ref,]$OI <- gsub("\n","",references[ref,]$OI, fixed=TRUE)  #remove the \n
 		  # OI <- unlist(strsplit(references[ref,]$OI, ";"))          #split along the semicolons
 		  # #
-		  ##	The email list is interesting because it seems it has line
-		  ##		breaks and is "; " delimited (and also  ",").  So we have to clean the line
-		  ##		a bit to start:
+		  ##	it wasn't working, but then I realized that the problem with OI was the same as the problem with the emails 
+		  ##		I modified that code to get the spacing right, and it looks like it worked.
 		  #
 		  references[ref,]$OI <- gsub(" ", "", references[ref,]$OI, fixed=TRUE)
 		  references[ref,]$OI <- gsub("\n"," ", references[ref,]$OI, fixed=TRUE)
