@@ -324,7 +324,7 @@ read_authors <- function(references, filename_root="") {
 	)
 	
 	authors__references <- data.frame(
-		"AU_ID" = character(0),
+	  "AU_ID" = character(0),
 		"UT" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
@@ -381,7 +381,16 @@ read_authors <- function(references, filename_root="") {
 		  references[ref,]$RI <- gsub("\n"," ", references[ref,]$RI, fixed=TRUE)
 		  references[ref,]$RI <- gsub("; ", ";", references[ref,]$RI, fixed=TRUE)
 		  references[ref,]$RI <- trimws(references[ref,]$RI,which = "both")
-		  RI <- unlist(strsplit(references[ref,]$OI, ";"))  
+		  RI <- unlist(strsplit(references[ref,]$RI, ";"))  
+		  
+		  # ONCE I SAW IT WORKED WITH RI, I ADDED SAME FOR RID 2 DECEMBER 2017
+		  
+		  references[ref,]$RID <- gsub(" ", "", references[ref,]$RID, fixed=TRUE)
+		  references[ref,]$RID <- gsub("\n"," ", references[ref,]$RID, fixed=TRUE)
+		  references[ref,]$RID <- gsub("; ", ";", references[ref,]$RID, fixed=TRUE)
+		  references[ref,]$RID <- trimws(references[ref,]$RID,which = "both")
+		  RID <- unlist(strsplit(references[ref,]$RID, ";"))  
+		  
 		  
 		  
 		  ########################################################
@@ -458,7 +467,9 @@ read_authors <- function(references, filename_root="") {
 
 			
 			authors[i,"RI"] <- ""
+			authors[i,"RID"] <- "" # Added EB
 			authors[i,"OI"] <- "" # Added EB
+
 
 			##	If we have Researcher ID information, we'll try to match it to
 			##		individual authors:
@@ -504,7 +515,26 @@ read_authors <- function(references, filename_root="") {
 				}
 				authors[i,"OI"] <- oid_match
 			}
-		
+			
+			# Copied the above for RID (by EB)
+			if (!is.na(RID[1])) {
+			  Similarity <- 0
+			  ridd_match <- ""
+			  
+			  for (ridd in 1:length(RID)) {
+			    ##	More sophisticated similarity measures could be devised here
+			    ##		but we'll use a canned distance composite from the 
+			    ##		RecordLinkage package:
+			    newSimilarity <- jarowinkler(RID[ridd], authors[i,"AF"])
+			    
+			    if ( (newSimilarity > 0.8) & (newSimilarity > Similarity) ) {
+			      Similarity <- newSimilarity
+			      rid_match <- RID[ridd]
+			    }
+			  }
+			  authors[i,"RID"] <- ridd_match
+			}
+			
 			
 			##	Country is no longer stored with an author, we'll pull it during
 			##		analyses from any existing addresses attached to the author
@@ -526,7 +556,8 @@ read_authors <- function(references, filename_root="") {
 			authors__references[i,"UT"] <- references[ref,"UT"]
 			authors__references[i,"C1"] <- authors[i,"C1"]
 			authors__references[i,"RP"] <- authors[i,"RP"]
-			# authors__references[i,"RI"] <- authors[i,"RI"] # still not parsing out the multuple RI EB 17 feb /2017
+			authors__references[i,"RI"] <- authors[i,"RI"] # still not parsing out the multuple RI EB 17 feb /2017
+			authors__references[i,"RID"] <- authors[i,"RID"] # still not parsing out the multuple RI EB 17 feb /2017
 			authors__references[i,"OI"] <- authors[i,"OI"]
 			authors__references[i,"Author_Order"] <- aut
 			
