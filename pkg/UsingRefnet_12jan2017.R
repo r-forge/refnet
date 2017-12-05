@@ -3,7 +3,7 @@
 ## In RStudio menus go to "Tools"->"Shell" and type the following: git push origin proposed-updates
 ## See: http://r-bio.github.io/intro-git-rstudio/ for more info.
 
-## THis is Forrest's original instructions for getting started
+## This is Forrest's original instructions for getting started
 #	Set this to wherever you unzipped the archive folders (not /src):
 # setwd("C:/tmp")
 # detach(package:refnet, unload=TRUE)
@@ -32,7 +32,8 @@ devtools::install_github("embruna/refnet", ref = "proposed-updates", subdir = "p
 
 require(refnet)
 # to check can run read_references
-read_references # uncomment this to see what code is being read in.
+# uncomment the following line to see what code is being read in.
+# read_references 
 
 ?refnet #Package info
 
@@ -50,12 +51,19 @@ rm(list=ls())
 # see: https://www.r-bloggers.com/data-on-github-the-easy-way-to-make-your-data-available/ 
 
 # the first argument of "read_references" should point to the folder where your data files are installed. 
+
+# EMB: I have been using the following files to test drive the package: 
+    # Ecuador.txt
+    # Ecuador_0114.txt: Data from all 55 journals 2001-2014 downloaded 1/20/2017
+    # EBpubs.txt: Emilio Bruna's articles (downloaded Jan 2017)
+    # peru.txt
+    # Ecology.txt: all articles published in Ecology in 2016
+
 ecuador_references <- read_references("./data/Ecuador.txt", dir=FALSE, filename_root="./pkg/output/ecuador")
 output <- read_authors(ecuador_references, filename_root="./pkg/output/ecuador")
 ecuador_authors <- output$authors
 ecuador_authors__references <- output$authors__references
 
-#Data from all 55 journals 2001-2014 downloaded 1/20/2017
 ecuador2_references <- read_references("./data/Ecuador_0114.txt", dir=FALSE, filename_root="./pkg/output/ecuador2") 
 output <- read_authors(ecuador2_references, filename_root="./pkg/output/ecuador2")
 ecuador2_authors <- output$authors
@@ -71,16 +79,16 @@ output <- read_authors(peru_references, filename_root="./pkg/output/peru")
 peru_authors <- output$authors
 peru_authors__references <- output$authors__references
 
-# # #SOME BINDING UP OF DATASETS 
-#  foo1 <- read.csv("./pkg/output/EB_authors__references.csv", header = TRUE)
-#  foo2 <- read.csv("./pkg/output/EB_authors.csv", header = TRUE)
-#  foo3<-full_join(foo1,foo2,by ="AU_ID")
+ecology_references <- read_references("./data/Ecology.txt", dir=FALSE, filename_root="./pkg/output/peru")
+output <- read_authors(ecology_references, filename_root="./pkg/output/Ecology")
+ecology_authors <- output$authors
+ecology_authors__references <- output$authors__references
+
 
  
 ##############################################################################################
 ##########################           NEXT STEPS (12 jan 2017)             #####################
 # 1) the researcherID is not being read in correctly due to T-R changing from RID to RI...
-# 2) ...but it's a moot point, since we will be changing to ORCID ID to help disambiguate names
 ###############################################################################################
 
 ## FIX LIST
@@ -93,49 +101,40 @@ peru_authors__references <- output$authors__references
 # 
 # Can try to include in the code for read_authors, but might be best to just hack and add to file later.
 # 
-
-C1<-eb_references$C1
-foo<-unlist(strsplit(C1, "\n")) 
-C1_address <- gsub("^\\[.*\\] (.*)$", "\\1", foo) #just the address
-foo<-as.data.frame(foo) #makes a dataframe
-foo$C1_address<-C1_address #adds address to column
-x <- data.frame(do.call('rbind', strsplit(as.character(foo$foo),']',fixed=TRUE)))
-names(x)[2]<-"address"
-x$X1 <- unlist(gsub("\\[", "", x$X1))
-z<-x$X1 %>% str_split("\\;", simplify=TRUE)
-x<-select(x,-1)
-q<-cbind(x,z, stringsAsFactors=FALSE)
-q[q==""]<-NA
-str(x)
-str(q)
-z<-q %>% gather("Author_No","AF",-address,na.rm=TRUE)
-all<-full_join(eb_authors,z,by="AF")
+# C1<-eb_references$C1
+# foo<-unlist(strsplit(C1, "\n")) 
+# C1_address <- gsub("^\\[.*\\] (.*)$", "\\1", foo) #just the address
+# foo<-as.data.frame(foo) #makes a dataframe
+# foo$C1_address<-C1_address #adds address to column
+# x <- data.frame(do.call('rbind', strsplit(as.character(foo$foo),']',fixed=TRUE)))
+# names(x)[2]<-"address"
+# x$X1 <- unlist(gsub("\\[", "", x$X1))
+# z<-x$X1 %>% str_split("\\;", simplify=TRUE)
+# x<-select(x,-1)
+# q<-cbind(x,z, stringsAsFactors=FALSE)
+# q[q==""]<-NA
+# str(x)
+# str(q)
+# z<-q %>% gather("Author_No","AF",-address,na.rm=TRUE)
+# all<-full_join(eb_authors,z,by="AF")
 
 # Need to figure out how to get WOS record in there to match them all up./
 # test<- eb_references %>% select (C1,UT)
 # names(test)[1]<-"foo"
 # foo<-full_join(foo,test,by="foo")
 
+############################################################
+# BACK TO FORREST'S ORIGINAL INSTRUCTIONS
+############################################################
 ##	After reading the files in you can check the ecuador_authors.csv file
 ##	and by hand in Excel, using the AU_ID_Dupe and Similarity fields, merge any author records that represent the same author.
 ##	After doing so you can read these back into R using the following, or if you're not starting from scratch above:
 
 ###	Can be read back in without importing from the following three commands:
-ecuador_references <- read.csv("output/ecuador_references.csv", as.is=TRUE)
-ecuador_authors <- read.csv("output/ecuador_authors.csv", as.is=TRUE)
-ecuador_authors__references <- read.csv("output/ecuador_authors__references.csv", as.is=TRUE)
+ecuador2_references <- read.csv("output/ecuador2_references.csv", as.is=TRUE)
+ecuador2_authors <- read.csv("output/ecuador2_authors.csv", as.is=TRUE)
+ecuador2_authors__references <- read.csv("output/ecuador2_authors__references.csv", as.is=TRUE)
 
-
-##	Process Brazilian records:
-# 
-# brazil_references <- read_references("data/savedrecs (5).ciw", dir=FALSE, filename_root="output/brazil")
-# output <- read_authors(brazil_references, filename_root="output/brazil")
-# brazil_authors <- output$authors
-# brazil_authors__references <- output$authors__references
-
-#brazil_references <- read.csv("output/brazil_references.csv", as.is=TRUE)
-#brazil_authors <- read.csv("output/brazil_authors.csv", as.is=TRUE)
-#brazil_authors__references <- read.csv("output/brazil_authors__references.csv", as.is=TRUE)
 
 
 ##	Calculate the percentage of author records without contact information:
@@ -188,9 +187,9 @@ merged_references <- output$references
 merged_authors <- output$authors
 merged_authors__references <- output$authors__references
 
-##	And finally after scrolling through and hand-correcting any authors
+##	  And finally after scrolling through and hand-correcting any authors
 ##		from the merged list that have a high similarity:
-#m   erged_authors <- read.csv("merged_authors.csv", as.is=TRUE)
+#     merged_authors <- read.csv("merged_authors.csv", as.is=TRUE)
 
 output <- remove_duplicates(authors=merged_authors, authors__references=merged_authors__references, filename_root="output/merged_nodupe")
 merged_authors <- output$authors
