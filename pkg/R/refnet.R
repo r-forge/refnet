@@ -12,7 +12,7 @@
 	require(rworldmap)
 	require(RecordLinkage)
 	require(Matrix)
-	require(plyr)  #need to update to dplyr?
+	require(plyr)  # need to update to dplyr
 	require(igraph)
 	require(network)
 	require(sna)
@@ -91,10 +91,11 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 		"PT" = character(0),
 		"PU" = character(0),
 		"PY" = character(0),
-		"RI" = character(0),  # original field code for Thomson-Reuters ResearcherID
-	  "RID" = character(0), # New field code for Thomson-Reuters ResearcherID)
-	  "OI"= character(0),   # New field code for ORCID ID 
-		"RP" = character(0),
+		"RI" = character(0),  # NEW field code for Thomson-Reuters ResearcherID
+	  "RID" = character(0), # OLD field code for Thomson-Reuters ResearcherID Older searchers will have RID, not RI
+	  "OI"= character(0),   # New field code for ORCID ID (added EB Jan 2017)
+	  "PM"= character(0),   # Pubmed ID Number (added by EB 3 dec 2017)
+	  "RP" = character(0),
 		"SC" = character(0),
 		"SI" = character(0),
 		"SN" = character(0),
@@ -113,17 +114,14 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 	)
 	
 	
-	##	This is an index for the current record, it gets iterated for 
-	##		record we advance through:
+	##	This is an index for the current record, it gets iterated for each record we advance through:
 	i <- 1
-	
 	
 	if (dir) {
 		file_list = dir(path=data)
 	}	else {
 		file_list = data
 	}
-	
 	
 	##	Strip out any files in the directory that aren't Web of Knowledge files:
 	file_list = file_list[ grep(".ciw|.txt", file_list) ]
@@ -237,19 +235,22 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 	
 			
 			# --------------
-			#   EB Comment 14 jan 2017
-			# The reason that the RI and OI fields aren't being read in properly is because the text files include extra spaces 
-			# after they carriage return the longer records to the next line. 
-			# In ebpubs record WOS: "WOS:000269700500018
-			# OI should be Dattilo, Wesley/0000-0002-4758-4379; Bruna, Emilio/0000-0003-3381-8477; Vasconcelos, Heraldo/0000-0001-6969-7131; Izzo, Thiago/0000-0002-4613-3787
-			# The same is true of names - only first one was being read in.
-			# I somehow got it to read all the names and orcids in by replacing this line below:
-			# output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
-			# with this line: 
-		  # output[i, field] <- paste(output[i, field], line_text, "\\s+", sep="")
-			# but this left \s+ in between. After reading and experimenting I just deleted the "\n"
-			# or "\\s+" completeley...and...voila!
-			# Then realized wasn't being read into *_authors, so added a space as seperator after ;
+			# EMB 2 December 2017: THE FOLLOWING ISSUES WERE RESOLVED BY EMB. 
+			#   OI See notes below in the section on reading in OI
+			#   Names: See the solution in this section
+			#
+			#     EMB 14 jan 2017: RI and OI fields aren't being read in properly because the text files include extra spaces 
+			#     after they carriage return the longer records to the next line. In ebpubs record WOS: "WOS:000269700500018
+			#     OI should be Dattilo, Wesley/0000-0002-4758-4379; Bruna, Emilio/0000-0003-3381-8477; Vasconcelos, Heraldo/0000-0001-6969-7131; Izzo, Thiago/0000-0002-4613-3787
+			#   
+			#     The same is true of names - only first one was being read in.
+			#     I somehow got it to read all the names and orcids in by replacing this line below:
+			#     output[i, field] <- paste(output[i, field], line_text, "\n", sep="")
+			#     with this line: 
+		  #     output[i, field] <- paste(output[i, field], line_text, "\\s+", sep="")
+			#     but this left \s+ in between. After reading and experimenting I just deleted the "\n"
+			#     or "\\s+" completeley...and...voila!
+			#     Then realized wasn't being read into *_authors, so added a space as seperator after ;
 			# --------------
 			
 			##	Check to see if the current field is one we are saving to output:
@@ -260,7 +261,6 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 			}
 			
 		
-
 			##	If this is the end of a record then add any per-record items and
 			##		advance our row:
 			if (field == "ER") {
@@ -288,11 +288,12 @@ read_references <- function(data=".", dir=TRUE, filename_root="") {
 }	
 
 ##	END: read_references():
-#####
+##################################################
+##################################################
 
 
-
-#####
+##################################################
+##################################################
 ##	BEGIN: read_authors():
 
 #' Processes the output of read_references() to extract authors
@@ -317,7 +318,7 @@ read_authors <- function(references, filename_root="") {
 		"EM" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
-		"RID" = character(0), # added by EB
+		"RID" = character(0),
 		"RI" = character(0),
 		"OI"= character(0),  # added by EB
 		stringsAsFactors=FALSE
@@ -328,7 +329,7 @@ read_authors <- function(references, filename_root="") {
 		"UT" = character(0),
 		"C1" = character(0),
 		"RP" = character(0),
-		"RID" = character(0), # added by EB 2 dec 2017
+		"RID" = character(0),
 		"RI" = character(0), # added by EB 2 dec 2017
 		"OI" = character(0), #ADDED EB 18Feb17
 		"Author_Order" = numeric(0),
@@ -371,19 +372,21 @@ read_authors <- function(references, filename_root="") {
 		RP_address <- gsub("^.*\\(reprint author\\), (.*)$", "\\1", RP)
 		
 		##	Process author Researcher ID fields:
-		
-		  # RI <- unlist(strsplit(references[ref,]$RI, "; "))
-		  # 
-		  ##	this it wasn't working, but then I realized that the problem with OI was the same as the problem with the emails 
-		  ##		I modified that code to get the spacing right, and it looks like it worked. 2 december 2017
-		  #
+		  
+		  # RI <- unlist(strsplit(references[ref,]$RI, "; ")) EMB 2 decvember 2017: CAN DELETE THIS LINE.
+		      # Note: this was challenging because there were carriage returns and uneven spacing in the files downloaded from WOS. 
+		      # Then I realized that the problem with OI was the same as the problem with the emails, so I modified that code 
+	      	# for processing that field to get the spacing along which to split the string right.
+		  
 		  references[ref,]$RI <- gsub(" ", "", references[ref,]$RI, fixed=TRUE)
 		  references[ref,]$RI <- gsub("\n"," ", references[ref,]$RI, fixed=TRUE)
 		  references[ref,]$RI <- gsub("; ", ";", references[ref,]$RI, fixed=TRUE)
 		  references[ref,]$RI <- trimws(references[ref,]$RI,which = "both")
 		  RI <- unlist(strsplit(references[ref,]$RI, ";"))  
-		  
-		  # ONCE I SAW IT WORKED WITH RI, I ADDED SAME FOR RID 2 DECEMBER 2017
+
+		  # Note: this was challenging because there were carriage returns and uneven spacing in the files downloaded from WOS. 
+		  # Then I realized that the problem with OI was the same as the problem with the emails, so I modified that code 
+		  # for processing that field to get the spacing along which to split the string right.
 		  
 		  references[ref,]$RID <- gsub(" ", "", references[ref,]$RID, fixed=TRUE)
 		  references[ref,]$RID <- gsub("\n"," ", references[ref,]$RID, fixed=TRUE)
@@ -392,19 +395,11 @@ read_authors <- function(references, filename_root="") {
 		  RID <- unlist(strsplit(references[ref,]$RID, ";"))  
 		  
 		  
-		  
-		  ########################################################
-		  #
-		  #
-		  # Added by EB. This splits the ORCID ID apart and adds it to the *_authors.csv file
-		  #
-		  # references[ref,]$OI <- gsub("[[:space:]]", "", references[ref,]$OI, fixed=TRUE) #Remove the spaces
-		  # references[ref,]$OI <- gsub("\t","",references[ref,]$OI, fixed=TRUE)  #remove the \t
-		  # references[ref,]$OI <- gsub("\n","",references[ref,]$OI, fixed=TRUE)  #remove the \n
-		  # OI <- unlist(strsplit(references[ref,]$OI, ";"))          #split along the semicolons
-		  # #
-		  ##	it wasn't working, but then I realized that the problem with OI was the same as the problem with the emails 
-		  ##		I modified that code to get the spacing right, and it looks like it worked.
+	  ## Process author ORCID ID fields to add to the *_authors.csv file (Added by EMB 2 dec 2017)
+      
+		  # Note: this was challenging because there were carriage returns and uneven spacing in the files downloaded from WOS. 
+		  # Then I realized that the problem with OI was the same as the problem with the emails, so I modified that code 
+		  # for processing that field to get the spacing along which to split the string right.
 		  #
 		  references[ref,]$OI <- gsub(" ", "", references[ref,]$OI, fixed=TRUE)
 		  references[ref,]$OI <- gsub("\n"," ", references[ref,]$OI, fixed=TRUE)
@@ -465,9 +460,8 @@ read_authors <- function(references, filename_root="") {
 
 			authors[i,"RP"] <- paste0(RP_address[ grep(authors_AU[aut], RP) ], collapse="\n")
 
-			
+			authors[i,"RID"] <- ""# Added EB
 			authors[i,"RI"] <- ""
-			authors[i,"RID"] <- "" # Added EB
 			authors[i,"OI"] <- "" # Added EB
 
 
@@ -516,25 +510,26 @@ read_authors <- function(references, filename_root="") {
 				authors[i,"OI"] <- oid_match
 			}
 			
+			
 			# Copied the above for RID (by EB)
+			
 			if (!is.na(RID[1])) {
 			  Similarity <- 0
-			  ridd_match <- ""
+			  oid_match <- ""
 			  
-			  for (ridd in 1:length(RID)) {
+			  for (oid in 1:length(RID)) {
 			    ##	More sophisticated similarity measures could be devised here
 			    ##		but we'll use a canned distance composite from the 
 			    ##		RecordLinkage package:
-			    newSimilarity <- jarowinkler(RID[ridd], authors[i,"AF"])
+			    newSimilarity <- jarowinkler(RID[oid], authors[i,"AF"])
 			    
 			    if ( (newSimilarity > 0.8) & (newSimilarity > Similarity) ) {
 			      Similarity <- newSimilarity
-			      rid_match <- RID[ridd]
+			      oid_match <- RID[oid]
 			    }
 			  }
-			  authors[i,"RID"] <- ridd_match
+			  authors[i,"RID"] <- oid_match
 			}
-			
 			
 			##	Country is no longer stored with an author, we'll pull it during
 			##		analyses from any existing addresses attached to the author
@@ -556,8 +551,8 @@ read_authors <- function(references, filename_root="") {
 			authors__references[i,"UT"] <- references[ref,"UT"]
 			authors__references[i,"C1"] <- authors[i,"C1"]
 			authors__references[i,"RP"] <- authors[i,"RP"]
-			authors__references[i,"RI"] <- authors[i,"RI"] # still not parsing out the multuple RI EB 17 feb /2017
-			authors__references[i,"RID"] <- authors[i,"RID"] # still not parsing out the multuple RI EB 17 feb /2017
+			authors__references[i,"RID"] <- authors[i,"RID"] # still not parsing out the multuple RI (EB 17 feb 2017). FIXED IN DEC 2017 by EB
+			authors__references[i,"RI"] <- authors[i,"RI"]   # still not parsing out the multuple RI (EB 17 feb 2017). FIXED IN DEC 2017 by EB
 			authors__references[i,"OI"] <- authors[i,"OI"]
 			authors__references[i,"Author_Order"] <- aut
 			
@@ -643,11 +638,13 @@ read_authors <- function(references, filename_root="") {
 }
 
 ##	END: read_authors():
-#####
+#############################################
+#############################################
 
 
 
-#####
+#############################################
+#############################################
 ##	BEGIN: remove_duplicates():
 
 #' Processes the output of read_authors() to remove any flagged duplicate authors
@@ -743,11 +740,13 @@ remove_duplicates <- function(authors, authors__references, addresses="", filena
 }
 
 ##	END: remove_duplicates():
-#####
+########################################
+########################################
 
 
 
-#####
+########################################
+########################################
 ##	BEGIN: merge_records():
 
 #' Merges two sets of references/authors/authors__references/addresses objects
@@ -886,11 +885,13 @@ merge_records <- function(references, authors, authors__references, addresses=""
 }
 
 ##	END: merge_records():
-#####
+########################################
+########################################
 
 
 
-#####
+########################################
+########################################
 ##	BEGIN: refnet_geocode():
 
 #' Uses the Google Maps API to process a data.frame of addresses and attempts to geocode them
@@ -989,10 +990,12 @@ refnet_geocode <- function (x, key="", verbose=FALSE) {
 }
 
 ##	END: refnet_geocode():
-#####
+########################################
+########################################
 
 
-#####
+########################################
+########################################
 ##	BEGIN: read_addresses():
 
 #' Processes multiple records of a data.frame of addresses and attempts to geocode them using refnet_geocode()
@@ -1059,11 +1062,12 @@ read_addresses <- function(x, filename_root="", key="", verbose=FALSE) {
 }
 
 ##	END: read_addresses():
-#####
+########################################
+########################################
 
 
-
-#####
+########################################
+########################################
 ##	BEGIN: plot_addresses_points():
 
 #' Plot address point locations on world map
@@ -1089,11 +1093,13 @@ plot_addresses_points <- function(addresses) {
 }
 
 ##	END: plot_addresses_points():
-#####
+########################################
+########################################
 
 
 
-#####
+########################################
+########################################
 ##	BEGIN: plot_addresses_country():
 ##		
 
@@ -1129,11 +1135,13 @@ plot_addresses_country <- function(addresses) {
 }
 
 ##	END: plot_addresses_country():
-#####
+########################################
+########################################
 
 
 
-#####
+########################################
+########################################
 ##	BEGIN: net_plot_coauthor():
 
 #' Creates a network diagram of coauthors' countries linked by reference
@@ -1228,11 +1236,13 @@ net_plot_coauthor <- function(addresses, authors__references) {
 }
 
 ##	END: net_plot_coauthor():
-#####
+########################################
+########################################
 
 
 
-#####
+########################################
+########################################
 ##	BEGIN: net_plot_coauthor_country():
 
 #' Creates a network diagram of coauthors' countries linked by reference, and with nodes arranged geographically
@@ -1434,11 +1444,13 @@ net_plot_coauthor_country <- function(addresses, authors__references) {
 }
 
 ##	END: net_plot_coauthor_country():
-#####
+########################################
+########################################
 
 
 
-#####
+########################################
+########################################
 ##	BEGIN: net_plot_coauthor_address():
 
 #' Creates a network diagram of coauthors' addresses linked by reference, and with nodes arranged geographically
@@ -1631,4 +1643,5 @@ net_plot_coauthor_address <- function(addresses, authors__references) {
 }
 
 ##	END: net_plot_coauthor_address():
-#####
+########################################
+########################################
